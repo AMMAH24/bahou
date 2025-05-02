@@ -223,71 +223,7 @@
             }
         }
     </style>
-    <script>
-        const GITHUB_TOKEN = 'ghp_your_token_here';
-        const REPO_OWNER = 'yourusername';
-        const REPO_NAME = 'yourrepo';
-        const DATA_PATH = 'data.json';
-
-        async function fetchData() {
-            try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`);
-                const result = await response.json();
-                return JSON.parse(atob(result.content));
-            } catch (error) {
-                console.error('Error:', error);
-                return null;
-            }
-        }
-
-        async function loadCampaignData() {
-            const data = await fetchData();
-            if (!data) return;
-
-            document.getElementById('targetAmountDisplay').textContent = formatNumber(data.campaignData.target) + ' أوقية';
-            document.getElementById('currentAmount').textContent = formatNumber(data.totalCollected) + ' أوقية';
-            document.getElementById('statusBadge').textContent = data.campaignData.status;
-
-            if (data.campaignData.status === "استراحة") {
-                document.getElementById('mainContent').style.display = "none";
-                document.getElementById('breakMessage').style.display = "block";
-            }
-
-            updateProgress(data.totalCollected, data.campaignData.target);
-            loadPublicDonationHistory(data.donations);
-        }
-
-        function updateProgress(collected, target) {
-            const progress = (collected / target) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        function loadPublicDonationHistory(donations) {
-            const historyContainer = document.getElementById('publicDonationHistory');
-            if (donations.length === 0) {
-                historyContainer.innerHTML = '<p>لا توجد تبرعات مسجلة بعد</p>';
-                return;
-            }
-
-            let html = '';
-            donations.slice(-5).reverse().forEach(d => {
-                const date = new Date(d.date);
-                html += `
-                    <div class="history-item">
-                        <div>${date.toLocaleDateString()}</div>
-                        <div><span class="history-amount">${d.amount} أوقية</span> - ${d.donor}</div>
-                    </div>
-                `;
-            });
-            historyContainer.innerHTML = html;
-        }
-
-        window.onload = loadCampaignData;
-    </script>
+    
 </head>
 <body>
 
