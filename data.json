@@ -1,9 +1,1 @@
-{
-    "campaignData": {
-      "target": 10000,
-      "status": "جديد"
-    },
-    "whatsappNumber": "00000000",
-    "donations": [],
-    "totalCollected": 0
-  }
+{"name":"data.json","path":"data.json","sha":"c1cafea43139b18a6591b52e7f7f321c6333bbb5","size":171,"url":"https://api.github.com/repos/AMMAH24/bahou/contents/data.json?ref=main","html_url":"https://github.com/AMMAH24/bahou/blob/main/data.json","git_url":"https://api.github.com/repos/AMMAH24/bahou/git/blobs/c1cafea43139b18a6591b52e7f7f321c6333bbb5","download_url":"https://raw.githubusercontent.com/AMMAH24/bahou/main/data.json","type":"file","content":"ew0KICAgICJjYW1wYWlnbkRhdGEiOiB7DQogICAgICAidGFyZ2V0IjogMTAw\nMDAsDQogICAgICAic3RhdHVzIjogItis2K/ZitivIg0KICAgIH0sDQogICAg\nIndoYXRzYXBwTnVtYmVyIjogIjAwMDAwMDAwIiwNCiAgICAiZG9uYXRpb25z\nIjogW10sDQogICAgInRvdGFsQ29sbGVjdGVkIjogMA0KICB9\n","encoding":"base64","_links":{"self":"https://api.github.com/repos/AMMAH24/bahou/contents/data.json?ref=main","git":"https://api.github.com/repos/AMMAH24/bahou/git/blobs/c1cafea43139b18a6591b52e7f7f321c6333bbb5","html":"https://github.com/AMMAH24/bahou/blob/main/data.json"}}
