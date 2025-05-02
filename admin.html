@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم - فريق عين بلها</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        * { font-family: 'Tajawal', sans-serif; box-sizing: border-box; }
+        body { background: #f8f9fa; margin: 0; padding: 20px; }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* تصميم لوحة التحكم */
+        .admin-container { max-width: 1000px; margin: 20px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; }
+        .login-form { max-width: 400px; margin: 100px auto; }
+        .dashboard { display: none; }
+        .section { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .section h2 { color: #2c3e50; border-right: 4px solid #e74c3c; padding-right: 10px; }
+        
+        /* جدول التبرعات */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background: #34495e; color: white; }
+        
+        /* الأزرار */
+        .danger-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin: 2px; }
+        .btn { background: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; width: 100%; }
+        .back-btn { background: #3498db; margin-bottom: 20px; }
+        
+        /* نافذة الـ Token */
+        .token-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 350px;
+            text-align: center;
+        }
+        .token-modal h3 { color: #2c3e50; margin-bottom: 20px; }
+        .token-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        
+        @media (max-width: 768px) {
+            .admin-container { padding: 15px; }
+            .token-modal { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- واجهة تسجيل الدخول -->
+<div class="login-form" id="loginForm">
+    <div class="admin-container">
+        <button class="danger-btn" style="position: absolute; left: 20px; top: 20px;" onclick="window.location.href='index.html'">×</button>
+        <h2>تسجيل الدخول الإداري</h2>
+        <div class="form-group">
+            <label>كلمة السر:</label>
+            <input type="password" id="adminPassword" class="form-input" placeholder="mewmew">
+        </div>
+        <button class="btn" onclick="checkLogin()">دخول</button>
+    </div>
+</div>
+
+<!-- لوحة التحكم -->
+<div class="dashboard" id="dashboard">
+    <div class="admin-container">
+        <button class="btn back-btn" onclick="window.location.href='index.html'">← العودة</button>
+        
+        <!-- زر النشر -->
+        <button class="btn" onclick="showTokenModal()" style="background: #3498db; margin-bottom: 20px;">
+            نشر التحديثات إلى GitHub
+        </button>
+
+        <!-- إعدادات الحملة -->
+        <div class="section">
+            <h2>إعدادات الحملة</h2>
+            <div class="form-group">
+                <label>المبلغ المطلوب (أوقية):</label>
+                <input type="number" id="targetAmount" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>حالة الحملة:</label>
+                <select id="campaignStatus" class="form-input">
+                    <option value="جديد">جديد</option>
+                    <option value="عاجل">عاجل</option>
+                    <option value="استراحة">استراحة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>رقم الواتساب (8 أرقام):</label>
+                <input type="text" id="whatsappNumber" maxlength="8" class="form-input" placeholder="مثال: 12345678">
+            </div>
+            <button class="btn" onclick="saveSettings()">حفظ الإعدادات</button>
+        </div>
+
+        <!-- إدارة التبرعات -->
+        <div class="section">
+            <h2>إدارة التبرعات</h2>
+            <button class="danger-btn" onclick="deleteAllDonations()">حذف الكل</button>
+            <table id="donationsTable">
+                <thead>
+                    <tr>
+                        <th>المتبرع</th>
+                        <th>المبلغ</th>
+                        <th>التاريخ</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة الـ Token -->
+<div class="token-modal" id="tokenModal">
+    <h3>المصادقة المطلوبة</h3>
+    <input type="password" id="githubToken" class="form-input" placeholder="أدخل GitHub Token">
+    <div class="token-actions">
+        <button class="btn" onclick="uploadToGitHub()">نشر</button>
+        <button class="danger-btn" onclick="hideTokenModal()">إلغاء</button>
+    </div>
+</div>
+
+<script>
+    // الثوابت
+    const REPO_OWNER = 'ammah24'; // استبدل باسمك
+    const REPO_NAME = 'your-repo'; // استبدل باسم الريبو
+    const DATA_PATH = 'data.json';
+    let currentData = null;
+
+    // ========== نظام تسجيل الدخول ==========
+    async function checkLogin() {
+        const password = document.getElementById('adminPassword').value;
+        if(password !== 'mewmew') {
+            alert('كلمة السر غير صحيحة!');
+            return;
+        }
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        await loadLocalData();
+    }
+
+    // ========== إدارة النافذة المنبثقة ==========
+    function showTokenModal() {
+        document.getElementById('tokenModal').style.display = 'block';
+    }
+
+    function hideTokenModal() {
+        document.getElementById('tokenModal').style.display = 'none';
+        document.getElementById('githubToken').value = '';
+    }
+
+    // ========== جلب البيانات المحلية ==========
+    
+    function updateUI() {
+        document.getElementById('targetAmount').value = currentData.campaignData.target;
+        document.getElementById('campaignStatus').value = currentData.campaignData.status;
+        document.getElementById('whatsappNumber').value = currentData.whatsappNumber;
+
+        const tbody = document.querySelector('#donationsTable tbody');
+        tbody.innerHTML = currentData.donations.map((donation, index) => `
+            <tr>
+                <td>${donation.donor}</td>
+                <td>${donation.amount} أوقية</td>
+                <td>${new Date(donation.date).toLocaleString()}</td>
+                <td><button class="danger-btn" onclick="deleteDonation(${index})">حذف</button></td>
+            </tr>
+        `).join('');
+
+        const total = currentData.donations.reduce((sum, d) => sum + d.amount, 0);
+        tbody.innerHTML += `<tr style="background: #f8f9fa;"><td colspan="4">المجموع: ${total} أوقية</td></tr>`;
+    }
+
+    // ========== النشر إلى GitHub ==========
+    async function uploadToGitHub() {
+        const token = document.getElementById('githubToken').value;
+        if(!token) {
+            alert('يرجى إدخال الـ Token!');
+            return;
+        }
+
+        try {
+            // جلب الـ SHA الحالي
+            const current = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            const currentData = await current.json();
+
+            // تحديث البيانات
+            const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+                method: 'PUT',
+                headers: { 
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'تحديث تلقائي',
+                    content: btoa(JSON.stringify(currentData)),
+                    sha: currentData.sha
+                })
+            });
+
+            if(response.ok) {
+                alert('تم النشر بنجاح!');
+                hideTokenModal();
+            } else {
+                throw new Error('فشل في المصادقة');
+            }
+        } catch (error) {
+            alert('خطأ في النشر: ' + error.message);
+        }
+    }
+
+    // ========== إدارة التبرعات ==========
+    async function deleteDonation(index) {
+        if(!confirm('هل تريد حذف هذا التبرع؟')) return;
+        currentData.donations.splice(index, 1);
+        currentData.totalCollected = currentData.donations.reduce((sum, d) => sum + d.amount, 0);
+        updateUI();
+    }
+
+    async function deleteAllDonations() {
+        if(!confirm('هل تريد حذف جميع التبرعات؟')) return;
+        currentData.donations = [];
+        currentData.totalCollected = 0;
+        updateUI();
+    }
+
+    // ========== حفظ الإعدادات ==========
+    async function saveSettings() {
+        currentData.campaignData.target = parseInt(document.getElementById('targetAmount').value);
+        currentData.campaignData.status = document.getElementById('campaignStatus').value;
+        currentData.whatsappNumber = document.getElementById('whatsappNumber').value;
+        alert('تم الحفظ المحلي بنجاح!');
+    }
+</script>
+
+</body>
+</html>
