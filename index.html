@@ -1,22 +1,40 @@
-<!-- ✅ index.html المعدلة بالكامل -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta property="og:title" content="حملة تبرعات للخيمة الموقرة, فريق عين بلها">
+    <meta property="og:description" content="فريق 'عين بلها' هو أحد الفرق النشطة ضمن اتحاد أهل محمذن، ويضم مجموعة من الشباب المتطوعين المؤمنين بأهمية العمل الجماعي والخدمة المجتمعية.">
+    <meta property="og:image" content="https://ammah24.github.io/wslk.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://ammah24.github.io/wslk.jpg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فريق عين بلها</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #27ae60;
+            --text: #333;
+            --light: #f8f9fa;
+        }
+
         body {
             font-family: 'Tajawal', sans-serif;
-            background: #f8f9fa;
+            background: var(--light);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #333;
+            color: var(--text);
         }
+
         .card {
             background: white;
             border-radius: 15px;
@@ -25,12 +43,14 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
+            display: block;
         }
+
         .badge {
             position: absolute;
             top: -7px;
-            left: 0;
-            background: #e74c3c;
+            left: 0px;
+            background: var(--secondary);
             color: white;
             width: 60px;
             height: 60px;
@@ -41,7 +61,9 @@
             font-weight: bold;
             font-size: 14px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            z-index: 2;
         }
+
         .admin-toggle {
             position: absolute;
             top: 10px;
@@ -53,23 +75,50 @@
             height: 30px;
             border-radius: 50%;
             cursor: pointer;
+            z-index: 3;
         }
-        .team { font-weight: bold; text-align: center; margin-bottom: 25px; color: #3498db; font-size: 18px; }
-        .progress-container { margin: 20px 0; }
+
+        h1 {
+            color: var(--primary);
+            font-size: 24px;
+            margin: 10px 0 5px;
+            text-align: center;
+        }
+
+        .team {
+            color: #3498db;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 18px;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
         .progress-bar {
             height: 10px;
             background: #ecf0f1;
             border-radius: 5px;
             overflow: hidden;
         }
+
         .progress-fill {
             height: 100%;
-            background: #e74c3c;
+            background: var(--secondary);
             width: 0%;
             transition: width 0.5s;
         }
+
         .amount {
-            background: #e74c3c;
+            background: var(--secondary);
             color: white;
             font-size: 28px;
             font-weight: bold;
@@ -78,8 +127,15 @@
             margin: 20px 0;
             text-align: center;
         }
+
+        .description {
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
         .btn {
-            background: #27ae60;
+            background: var(--accent);
             color: white;
             border: none;
             padding: 12px;
@@ -88,20 +144,175 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
+            transition: background 0.3s;
         }
-        .donation-history { margin-top: 30px; max-height: 200px; overflow-y: auto; border-top: 1px solid #eee; padding-top: 20px; }
-        .history-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f0f0; }
-        .history-amount { font-weight: bold; color: #e74c3c; }
-        #breakMessage { display: none; text-align: center; font-size: 20px; padding: 20px; }
+
+        .btn:hover {
+            background: #2ecc71;
+        }
+
+        #mainContent { display: block; }
+        #breakMessage {
+            display: none;
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+        }
+
+        /* Donation History */
+        .donation-history {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-amount {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: 90%;
+                padding: 15px;
+            }
+            
+            .amount {
+                font-size: 24px;
+                padding: 10px;
+            }
+            
+            .description {
+                font-size: 14px;
+            }
+        }
     </style>
+    <script>
+        const REPO_OWNER = 'AMMAH24';
+        const REPO_NAME = 'bahou';
+        const DATA_PATH = 'data.json';
+        const GITHUB_TOKEN = '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';
+
+        // Unicode-safe encoding functions
+        function safeBtoa(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, 
+                function(match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                }
+            ));
+        }
+
+        function safeAtob(str) {
+            return decodeURIComponent(
+                atob(str).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join('')
+            );
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                const result = await response.json();
+                return JSON.parse(safeAtob(result.content));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function updateProgress(collected, target) {
+            const progress = Math.min((collected / target) * 100, 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('collectedAmount').textContent = formatNumber(collected) + ' أوقية';
+        }
+
+        function loadPublicDonationHistory(donations) {
+            const historyContainer = document.getElementById('publicDonationHistory');
+            
+            if (!donations || donations.length === 0) {
+                historyContainer.innerHTML = '<p>لا توجد تبرعات مسجلة بعد</p>';
+                return;
+            }
+
+            let html = '';
+            donations.slice(-5).reverse().forEach(d => {
+                const date = new Date(d.date);
+                html += `
+                    <div class="history-item">
+                        <div>${date.toLocaleDateString('ar-EG')}</div>
+                        <div><span class="history-amount">${d.amount} أوقية</span> - ${d.donor}</div>
+                    </div>
+                `;
+            });
+            historyContainer.innerHTML = html;
+        }
+
+        async function loadCampaignData() {
+            try {
+                const data = await fetchData();
+                if (!data) {
+                    console.warn('No data received from GitHub');
+                    return;
+                }
+
+                document.getElementById('targetAmountDisplay').textContent = formatNumber(data.campaignData.target) + ' أوقية';
+                document.getElementById('currentAmount').textContent = formatNumber(data.totalCollected) + ' أوقية';
+                document.getElementById('statusBadge').textContent = data.campaignData.status;
+
+                if (data.campaignData.status === "استراحة") {
+                    document.getElementById('mainContent').style.display = "none";
+                    document.getElementById('breakMessage').style.display = "block";
+                } else {
+                    document.getElementById('mainContent').style.display = "block";
+                    document.getElementById('breakMessage').style.display = "none";
+                }
+
+                updateProgress(data.totalCollected, data.campaignData.target);
+                loadPublicDonationHistory(data.donations);
+            } catch (error) {
+                console.error('Failed to load campaign data:', error);
+            }
+        }
+
+        window.onload = loadCampaignData;
+    </script>
 </head>
 <body>
-<div class="card">
+
+<div class="card" id="donationCard">
     <button class="admin-toggle" onclick="window.location.href='admin.html'">⚙️</button>
     <div class="badge" id="statusBadge">جديد</div>
+
     <div id="mainContent">
         <h1>فريق عين بلها</h1>
         <div class="team">العروبـة شعـارنا</div>
+
         <div class="progress-container">
             <div class="progress-text">
                 <span id="collectedAmount">0 أوقية</span>
@@ -111,75 +322,20 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
+
         <div class="amount" id="currentAmount">0 أوقية</div>
-        <p class="description">ساهم معنا في دعم حملة التبرع للخيمة الموقرة</p>
+        <p class="description">ساهم معنا في دعم حملة التبرع للخيمة الموقرة, و تذكـر دائـما "هي لله هي لله ,لا للسلطـة ولا للجــاه"</p>
         <button class="btn" onclick="window.location.href='purchase.html'">تبرع الآن</button>
+        
+        <!-- Public Donation History -->
         <div class="donation-history">
             <div class="history-title">آخر التبرعات</div>
             <div id="publicDonationHistory"></div>
         </div>
     </div>
+
     <div id="breakMessage">استريحوا شباب العروبة</div>
 </div>
-<script>
-    let campaign = { target: 10000, collected: 0, status: "جديد" };
 
-    function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    function updateProgress() {
-        const progress = (campaign.collected / campaign.target) * 100;
-        document.getElementById('progressFill').style.width = progress + '%';
-        document.getElementById('collectedAmount').textContent = formatNumber(campaign.collected) + ' أوقية';
-        document.getElementById('currentAmount').textContent = formatNumber(campaign.collected) + ' أوقية';
-    }
-
-    function loadPublicDonationHistory(donations) {
-        const historyContainer = document.getElementById('publicDonationHistory');
-        if (donations.length === 0) {
-            historyContainer.innerHTML = '<p>لا توجد تبرعات مسجلة بعد</p>';
-            return;
-        }
-        let html = '';
-        const recentDonations = donations.slice(-5).reverse();
-        recentDonations.forEach(d => {
-            const date = new Date(d.date);
-            html += `
-                <div class="history-item">
-                    <div><span class="history-amount">${d.amount} أوقية</span> - ${d.donor}</div>
-                    <div>${date.toLocaleDateString()}</div>
-                </div>
-            `;
-        });
-        historyContainer.innerHTML = html;
-    }
-
-    async function loadCampaignData() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/AMMAH24/bahou/main/data.json');
-            const data = await response.json();
-            campaign.target = data.campaignData.target;
-            campaign.collected = data.totalCollected;
-            campaign.status = data.campaignData.status;
-            document.getElementById('targetAmountDisplay').textContent = formatNumber(campaign.target) + ' أوقية';
-            document.getElementById('currentAmount').textContent = formatNumber(campaign.collected) + ' أوقية';
-            document.getElementById('statusBadge').textContent = campaign.status;
-            if (campaign.status === "استراحة") {
-                document.getElementById('mainContent').style.display = "none";
-                document.getElementById('breakMessage').style.display = "block";
-            } else {
-                document.getElementById('mainContent').style.display = "block";
-                document.getElementById('breakMessage').style.display = "none";
-            }
-            updateProgress();
-            loadPublicDonationHistory(data.donations);
-        } catch (error) {
-            console.error("فشل تحميل البيانات:", error);
-        }
-    }
-
-    window.onload = loadCampaignData;
-</script>
 </body>
 </html>
