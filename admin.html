@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>لوحة التحكم - فريق عين بلها</title>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
         * { font-family: 'Tajawal', sans-serif; box-sizing: border-box; }
@@ -142,6 +141,23 @@
     const DATA_PATH = 'data.json';
     let currentData = null;
 
+    // Helper functions for Unicode-safe encoding
+    function safeBtoa(str) {
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, 
+            function(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            }
+        ));
+    }
+
+    function safeAtob(str) {
+        return decodeURIComponent(
+            atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join('')
+        );
+    }
+
     // ========== نظام تسجيل الدخول ==========
     async function checkLogin() {
         const password = document.getElementById('adminPassword').value;
@@ -209,6 +225,11 @@
             const current = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
                 headers: { 'Authorization': `token ${token}` }
             });
+            
+            if (!current.ok) {
+                throw new Error('فشل في جلب البيانات الحالية');
+            }
+            
             const currentFileData = await current.json();
 
             // تحديث البيانات
@@ -220,7 +241,7 @@
                 },
                 body: JSON.stringify({
                     message: 'تحديث تلقائي',
-                    content: btoa(JSON.stringify(currentData)),
+                    content: safeBtoa(JSON.stringify(currentData)),
                     sha: currentFileData.sha
                 })
             });
@@ -229,10 +250,12 @@
                 alert('تم النشر بنجاح!');
                 hideTokenModal();
             } else {
-                throw new Error('فشل في المصادقة');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'فشل في المصادقة');
             }
         } catch (error) {
             alert('خطأ في النشر: ' + error.message);
+            console.error('GitHub API Error:', error);
         }
     }
 
